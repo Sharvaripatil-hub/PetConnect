@@ -1,0 +1,264 @@
+﻿{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section position-relative overflow-hidden">
+    <div class="hero-bg-pattern"></div>
+    <div class="container text-center position-relative">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-3 fw-bold mb-4 text-white">Find Your Perfect Companion</h1>
+                <p class="lead mb-5 text-white fs-4">Discover loving pets waiting for their forever homes. Every adoption saves a life and brings joy to your family.</p>
+                <div class="hero-buttons">
+                    <a href="{% url 'adopt' %}" class="btn btn-light btn-lg px-5 py-3 me-3 rounded-pill shadow">
+                        <i class="fas fa-heart me-2"></i>Start Adopting Today
+                    </a>
+                    <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="stat-icon bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-paw fa-2x text-white"></i>
+                        </div>
+                        <h3 class="fw-bold display-6 text-primary">{{ available_pets }}</h3>
+                        <p class="text-muted fs-5">Available Pets</p>
+                        <small class="text-success">
+                            <i class="fas fa-heart me-1"></i>Ready for adoption
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="stat-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-home fa-2x text-white"></i>
+                        </div>
+                        <h3 class="fw-bold display-6 text-success">{{ adopted_pets }}</h3>
+                        <p class="text-muted fs-5">Happy Adoptions</p>
+                        <small class="text-success">
+                            <i class="fas fa-check me-1"></i>Lives changed
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 hover-lift">
+                    <div class="card-body p-4">
+                        <div class="stat-icon bg-info bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-users fa-2x text-white"></i>
+                        </div>
+                        <h3 class="fw-bold display-6 text-info">{{ total_pets }}</h3>
+                        <p class="text-muted fs-5">Total Pets</p>
+                        <small class="text-info">
+                            <i class="fas fa-globe me-1"></i>In our care
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Pets -->
+{% if featured_pets %}
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-4">Meet Our Featured Pets</h2>
+            <p class="lead text-muted">These amazing companions are waiting for their forever homes</p>
+        </div>
+        <div class="row g-4">
+            {% for pet in featured_pets %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card pet-card border-0 shadow-sm h-100 hover-lift">
+                    <div class="position-relative overflow-hidden">
+                        {% if pet.image %}
+                            <img src="{{ pet.image.url }}" class="card-img-top pet-image" alt="{{ pet.name }}" style="height: 300px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 300px;">
+                                <i class="fas fa-paw fa-4x text-white opacity-75"></i>
+                            </div>
+                        {% endif %}
+                        <div class="position-absolute top-0 end-0 m-3">
+                            {% if not pet.adopted %}
+                                <span class="badge bg-success fs-6 px-3 py-2 rounded-pill">
+                                    <i class="fas fa-heart me-1"></i>Available
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning fs-6 px-3 py-2 rounded-pill">
+                                    <i class="fas fa-home me-1"></i>Adopted
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-bold mb-0">{{ pet.name }}</h5>
+                            <small class="text-muted">{{ pet.age }} year{{ pet.age|pluralize }}</small>
+                        </div>
+                        <p class="text-primary fw-semibold mb-2">
+                            <i class="fas fa-tag me-1"></i>{{ pet.breed }}
+                        </p>
+                        <p class="card-text text-muted">{{ pet.description|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a href="{% url 'pet_detail' pet.id %}" class="btn btn-primary rounded-pill px-4">
+                                <i class="fas fa-info-circle me-1"></i>Learn More
+                            </a>
+                            {% if not pet.adopted %}
+                                <a href="{% url 'contact' %}" class="btn btn-outline-success btn-sm rounded-pill">
+                                    <i class="fas fa-heart me-1"></i>Interested
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'adopt' %}" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow">
+                <i class="fas fa-search me-2"></i>View All {{ available_pets }} Available Pets
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Why Choose Us Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-4">Why Choose PetConnect?</h2>
+            <p class="lead text-muted">We're committed to making successful matches between pets and families</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
+                        <i class="fas fa-shield-alt fa-3x text-white"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Health Guaranteed</h4>
+                    <p class="text-muted">All our pets receive comprehensive health checks and vaccinations before adoption.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
+                        <i class="fas fa-handshake fa-3x text-white"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Ongoing Support</h4>
+                    <p class="text-muted">Our team provides continued support and guidance throughout your pet's life.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="text-center">
+                    <div class="feature-icon bg-info bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
+                        <i class="fas fa-heart fa-3x text-white"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Perfect Matches</h4>
+                    <p class="text-muted">We help you find the perfect pet that matches your lifestyle and preferences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white position-relative overflow-hidden">
+    <div class="cta-bg-pattern"></div>
+    <div class="container text-center position-relative">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-4">Ready to Make a Difference?</h2>
+                <p class="lead mb-5">Every pet deserves a loving home, and every family deserves the unconditional love of a pet. Start your adoption journey today and change two lives forever!</p>
+                <div class="cta-buttons">
+                    <a href="{% url 'adopt' %}" class="btn btn-light btn-lg px-5 py-3 me-3 rounded-pill shadow">
+                        <i class="fas fa-heart me-2"></i>Adopt a Pet
+                    </a>
+                    <a href="{% url 'contact' %}" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill">
+                        <i class="fas fa-envelope me-2"></i>Get in Touch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Additional Styles -->
+<style>
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+
+.pet-image {
+    transition: transform 0.3s ease;
+}
+
+.pet-card:hover .pet-image {
+    transform: scale(1.05);
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 70vh;
+}
+
+.hero-bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.cta-bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0; 
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+@media (max-width: 768px) {
+    .hero-buttons .btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    .cta-buttons .btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+</style>
+{% endblock %}

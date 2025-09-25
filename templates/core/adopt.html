@@ -1,0 +1,161 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Adopt a Pet - PetConnect{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-4">Find Your Perfect Companion</h1>
+        <p class="lead">Browse our lovely pets waiting for their forever homes</p>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Search by Name</label>
+                            <input type="text" class="form-control" name="search" value="{{ search_query }}" placeholder="Enter pet name">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Breed</label>
+                            <select class="form-select" name="breed">
+                                <option value="">All Breeds</option>
+                                {% for breed in all_breeds %}
+                                    <option value="{{ breed }}" {% if breed == breed_filter %}selected{% endif %}>{{ breed }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Age</label>
+                            <select class="form-select" name="age">
+                                <option value="">All Ages</option>
+                                <option value="1" {% if age_filter == '1' %}selected{% endif %}>1 year</option>
+                                <option value="2" {% if age_filter == '2' %}selected{% endif %}>2 years</option>
+                                <option value="3" {% if age_filter == '3' %}selected{% endif %}>3 years</option>
+                                <option value="4" {% if age_filter == '4' %}selected{% endif %}>4 years</option>
+                                <option value="5" {% if age_filter == '5' %}selected{% endif %}>5+ years</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-search me-1"></i>Search
+                            </button>
+                            <a href="{% url 'adopt' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pet Grid -->
+    {% if pets %}
+    <div class="row g-4 mb-5">
+        {% for pet in pets %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100 pet-card">
+                <div class="position-relative">
+                    {% if pet.image %}
+                        <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="card-img-top" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-primary d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <i class="fas fa-paw fa-4x text-white"></i>
+                        </div>
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-success fs-6">
+                            <i class="fas fa-heart me-1"></i>Available
+                        </span>
+                    </div>
+                    <div class="position-absolute bottom-0 start-0 m-3">
+                        <span class="badge bg-warning text-dark fs-6">
+                            {{ pet.age }} year{{ pet.age|pluralize }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold mb-2">{{ pet.name }}</h5>
+                    <p class="text-muted mb-2">
+                        <i class="fas fa-tag me-2"></i>{{ pet.breed }}
+                    </p>
+                    <p class="card-text text-muted flex-grow-1">
+                        {{ pet.description|truncatewords:15 }}
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{% url 'pet_detail' pet.id %}" class="btn btn-primary w-100">
+                            <i class="fas fa-eye me-2"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Pet pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if breed_filter %}&breed={{ breed_filter }}{% endif %}{% if age_filter %}&age={{ age_filter }}{% endif %}">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if breed_filter %}&breed={{ breed_filter }}{% endif %}{% if age_filter %}&age={{ age_filter }}{% endif %}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if breed_filter %}&breed={{ breed_filter }}{% endif %}{% if age_filter %}&age={{ age_filter }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if breed_filter %}&breed={{ breed_filter }}{% endif %}{% if age_filter %}&age={{ age_filter }}{% endif %}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if breed_filter %}&breed={{ breed_filter }}{% endif %}{% if age_filter %}&age={{ age_filter }}{% endif %}">Last</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <!-- No Pets Found -->
+    <div class="text-center py-5">
+        <i class="fas fa-search fa-5x text-muted mb-4"></i>
+        <h3>No pets found</h3>
+        <p class="text-muted">Try adjusting your search criteria or check back later for new arrivals.</p>
+        <a href="{% url 'adopt' %}" class="btn btn-primary">
+            <i class="fas fa-refresh me-2"></i>View All Pets
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.pet-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pet-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,65 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}About Us - PetConnect{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-4">About PetConnect</h1>
+        <p class="lead">Connecting loving families with pets in need of homes since 2020</p>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-6">
+            <h2 class="mb-4">Our Mission</h2>
+            <p class="lead">At PetConnect, we believe every pet deserves a loving home and every family deserves the joy of a furry companion.</p>
+            <p>We work tirelessly to connect abandoned, surrendered, and stray animals with caring families who will provide them with the love, care, and security they deserve.</p>
+        </div>
+        <div class="col-lg-6">
+            <div class="bg-primary rounded-3 d-flex align-items-center justify-content-center" style="height: 300px;">
+                <i class="fas fa-paw fa-5x text-white"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="bg-light rounded-3 p-5 mb-5">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-home fa-3x text-success mb-3"></i>
+                <h3 class="fw-bold">500+</h3>
+                <p class="text-muted">Successful Adoptions</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-paw fa-3x text-primary mb-3"></i>
+                <h3 class="fw-bold">200+</h3>
+                <p class="text-muted">Current Pets</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-users fa-3x text-info mb-3"></i>
+                <h3 class="fw-bold">50+</h3>
+                <p class="text-muted">Volunteers</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <i class="fas fa-calendar fa-3x text-warning mb-3"></i>
+                <h3 class="fw-bold">5</h3>
+                <p class="text-muted">Years of Service</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="bg-primary text-white rounded-3 p-5 text-center">
+        <h2 class="mb-4">Ready to Find Your New Best Friend?</h2>
+        <p class="lead mb-4">Browse our available pets or get in touch with any questions.</p>
+        <a href="{% url 'adopt' %}" class="btn btn-light btn-lg me-3">
+            <i class="fas fa-search me-2"></i>Browse Pets
+        </a>
+        <a href="{% url 'contact' %}" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-envelope me-2"></i>Contact Us
+        </a>
+    </div>
+</div>
+{% endblock %}

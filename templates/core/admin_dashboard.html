@@ -1,0 +1,475 @@
+﻿{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - PetConnect{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-dashboard {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 1.5rem;
+        color: #333;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stats-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .stats-label {
+        color: #666;
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .quick-action-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .quick-action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .recent-pets-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .table-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        margin: 0;
+    }
+    
+    .pet-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #e9ecef;
+    }
+    
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+    
+    .status-available {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-adopted {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .dashboard-section {
+        margin-bottom: 3rem;
+    }
+    
+    .section-title {
+        color: #333;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid;
+        border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+    }
+    
+    .system-info {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .system-info h4 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    
+    .system-info .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .system-info .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .toggle-btn {
+        padding: 0.3rem 0.8rem;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .toggle-available {
+        background: #28a745;
+        color: white;
+    }
+    
+    .toggle-adopted {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .toggle-btn:hover {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-4 text-center mb-0">
+                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                </h1>
+                <p class="text-center lead">Manage your PetConnect platform</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Statistics Cards -->
+    <div class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-chart-bar"></i> Statistics Overview
+        </h2>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="stats-number">{{ total_pets }}</div>
+                    <div class="stats-label">Total Pets</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stats-number">{{ available_pets }}</div>
+                    <div class="stats-label">Available for Adoption</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="stats-number">{{ adopted_pets }}</div>
+                    <div class="stats-label">Successfully Adopted</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div class="stats-number">{{ adoption_rate }}%</div>
+                    <div class="stats-label">Adoption Rate</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Additional Stats Row -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-dog"></i>
+                    </div>
+                    <div class="stats-number">{{ popular_breed }}</div>
+                    <div class="stats-label">Most Popular Breed</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="stats-number">{{ average_age }}</div>
+                    <div class="stats-label">Average Age (years)</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="stats-number">{{ pets_this_month }}</div>
+                    <div class="stats-label">Added This Month</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stats-number">{{ total_users }}</div>
+                    <div class="stats-label">Registered Users</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-bolt"></i> Quick Actions
+        </h2>
+        <div class="text-center">
+            <a href="/admin/core/pet/add/" class="quick-action-btn">
+                <i class="fas fa-plus"></i> Add New Pet
+            </a>
+            <a href="/admin/core/pet/" class="quick-action-btn">
+                <i class="fas fa-list"></i> Manage Pets
+            </a>
+            <a href="/admin/auth/user/" class="quick-action-btn">
+                <i class="fas fa-users"></i> Manage Users
+            </a>
+            <a href="/admin/" class="quick-action-btn">
+                <i class="fas fa-cog"></i> Admin Panel
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Pets -->
+    <div class="dashboard-section">
+        <h2 class="section-title">
+            <i class="fas fa-clock"></i> Recent Pets
+        </h2>
+        <div class="recent-pets-table">
+            <h3 class="table-header">
+                <i class="fas fa-paw"></i> Latest 10 Pets Added
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Breed</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                            <th>Added Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pet in recent_pets %}
+                        <tr>
+                            <td>
+                                {% if pet.image %}
+                                    <img src="{{ pet.image.url }}" alt="{{ pet.name }}" class="pet-image">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/60x60/6c757d/ffffff?text=Pet" alt="{{ pet.name }}" class="pet-image">
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ pet.name }}</strong>
+                            </td>
+                            <td>{{ pet.breed }}</td>
+                            <td>{{ pet.age }} years</td>
+                            <td>
+                                {% if pet.adopted %}
+                                    <span class="status-badge status-adopted">
+                                        <i class="fas fa-home"></i> Adopted
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge status-available">
+                                        <i class="fas fa-heart"></i> Available
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ pet.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <a href="/admin/core/pet/{{ pet.id }}/change/" class="btn btn-sm btn-outline-primary" title="Edit Pet">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="toggle-btn {% if pet.adopted %}toggle-adopted{% else %}toggle-available{% endif %}" 
+                                        onclick="toggleAdoptionStatus({{ pet.id }})" 
+                                        id="toggle-{{ pet.id }}"
+                                        title="Toggle Adoption Status">
+                                    {% if pet.adopted %}
+                                        <i class="fas fa-undo"></i> Mark Available
+                                    {% else %}
+                                        <i class="fas fa-check"></i> Mark Adopted
+                                    {% endif %}
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="fas fa-paw fa-3x mb-3"></i>
+                                    <p>No pets added yet. <a href="/admin/core/pet/add/">Add the first pet</a>!</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Information -->
+    <div class="dashboard-section">
+        <div class="system-info">
+            <h4>
+                <i class="fas fa-info-circle"></i> System Information
+            </h4>
+            <div class="info-item">
+                <span><strong>Django Version:</strong></span>
+                <span>{{ django_version }}</span>
+            </div>
+            <div class="info-item">
+                <span><strong>Media Files:</strong></span>
+                <span>{{ media_files_count }} images uploaded</span>
+            </div>
+            <div class="info-item">
+                <span><strong>Last Updated:</strong></span>
+                <span>{{ "now"|date:"M d, Y H:i" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+<div id="message-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+
+<script>
+function toggleAdoptionStatus(petId) {
+    fetch(`/toggle-adoption/${petId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const button = document.getElementById(`toggle-${petId}`);
+            const statusBadge = button.closest('tr').querySelector('.status-badge');
+            
+            if (data.adopted) {
+                button.className = 'toggle-btn toggle-adopted';
+                button.innerHTML = '<i class="fas fa-undo"></i> Mark Available';
+                button.title = 'Mark as Available';
+                statusBadge.className = 'status-badge status-adopted';
+                statusBadge.innerHTML = '<i class="fas fa-home"></i> Adopted';
+            } else {
+                button.className = 'toggle-btn toggle-available';
+                button.innerHTML = '<i class="fas fa-check"></i> Mark Adopted';
+                button.title = 'Mark as Adopted';
+                statusBadge.className = 'status-badge status-available';
+                statusBadge.innerHTML = '<i class="fas fa-heart"></i> Available';
+            }
+            
+            showMessage(data.message, 'success');
+            
+            // Update statistics (reload page after short delay)
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            showMessage(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('An error occurred while updating the pet status.', 'error');
+    });
+}
+
+function showMessage(message, type) {
+    const messageContainer = document.getElementById('message-container');
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <strong>${type === 'success' ? 'Success!' : 'Error!'}</strong> ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    messageContainer.appendChild(alertDiv);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+// Add CSRF token to all AJAX requests
+document.addEventListener('DOMContentLoaded', function() {
+    // Create CSRF token input if it doesn't exist
+    if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        document.body.appendChild(csrfInput);
+    }
+});
+</script>
+{% endblock %}
