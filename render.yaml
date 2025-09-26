@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: petconnect
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn PetConnect.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: petconnect-db
+          property: connectionString
+
+databases:
+  - name: petconnect-db
+    databaseName: petconnect
+    user: petconnect
